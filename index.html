@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 ⚡ 라스베가스 로열 카지노 (사운드 마스터 에디션) ⚡ 🎰</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #12161a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            margin: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        h1 { color: #ffd700; margin-bottom: 5px; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+        .sub-title { color: #aaa; font-size: 14px; margin-bottom: 25px; }
+       
+        /* 통합 상단 대시보드 */
+        .dashboard {
+            width: 100%;
+            max-width: 900px;
+            background: #1e252b;
+            border: 2px solid #343e46;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            align-items: center;
+        }
+        .dash-item { background: #151a1e; padding: 12px 20px; border-radius: 8px; border: 1px solid #2a343c; }
+        .dash-label { font-size: 12px; color: #888; margin-bottom: 4px; font-weight: bold; }
+        .dash-value { font-size: 20px; font-weight: bold; color: #ffb300; display: flex; align-items: center; justify-content: space-between; }
+       
+        .combo-badge {
+            font-size: 12px; background: #e91e63; color: white; padding: 2px 8px;
+            border-radius: 10px; font-weight: bold; display: none;
+            animation: pulse 0.5s infinite alternate;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+
+        /* 자산 기록 등록 영역 */
+        .save-zone { display: flex; gap: 8px; width: 100%; }
+        .save-zone input { flex: 1; background: #2c353d; border: 1px solid #44525d; color: white; padding: 8px; border-radius: 6px; }
+
+        /* ⚙️ 오디오 제어 설정 탭 패널 */
+        .audio-setting-panel {
+            width: 100%; max-width: 900px; background: #1a2229; border: 1px solid #2a343c;
+            border-radius: 10px; padding: 12px 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px;
+        }
+        .audio-title { font-size: 14px; font-weight: bold; color: #ffd700; display: flex; align-items: center; gap: 6px; }
+        .audio-controls { display: flex; align-items: center; gap: 15px; }
+        .bgm-toggle-btn { background-color: #37474f; border: 1px solid #455a64; color: #fff; padding: 6px 14px; font-size: 13px; border-radius: 4px; }
+        .bgm-toggle-btn.playing { background-color: #00e676; color: #000; border-color: #00c853; }
+        .volume-slider-wrapper { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #ccc; }
+        .volume-slider { width: 120px; accent-color: #ffd700; cursor: pointer; }
+
+        /* 모드 선택 탭 스타일 */
+        .mode-tabs { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 900px; }
+        .tab-btn {
+            flex: 1; padding: 15px; font-size: 15px; font-weight: bold;
+            background-color: #242c33; color: #9aa0a6; border: 1px solid #343e46;
+            border-radius: 8px; cursor: pointer; transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: #ffd700; color: #12161a; border-color: #ffd700;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+        }
+
+        /* 게임 패널 및 컨트롤 보드 */
+        .game-panel {
+            width: 100%; max-width: 900px; display: none;
+            flex-direction: column; align-items: center;
+            background: #1e252b; padding: 25px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #2a343c;
+        }
+        .game-panel.active { display: flex; }
+
+        .controls-wrapper {
+            width: 100%; background: #151a1e; padding: 15px; border-radius: 8px;
+            margin-bottom: 20px; border: 1px solid #2a343c;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 15px; justify-content: space-between;
+        }
+        .control-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .control-group label { font-size: 14px; color: #ccc; font-weight: bold; margin-right: 4px; }
+
+        select, button, input[type="number"] {
+            padding: 10px 12px; font-size: 15px; border-radius: 6px;
+            border: 1px solid #343e46; background: #242c33; color: white; box-sizing: border-box;
+        }
+        input[type="number"] { width: 110px; text-align: right; font-weight: bold; color: #ffb300; }
+        select { color: #fff; cursor: pointer; }
+       
+        button { font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        button:active { transform: scale(0.97); }
+        button:disabled { background-color: #242c33 !important; color: #555 !important; border-color: #2a343c !important; cursor: not-allowed; }
+       
+        .start-btn { background-color: #d32f2f; color: white; border: none; padding: 10px 20px; }
+        .start-btn:hover { background-color: #b71c1c; }
+       
+        .bet-util-btn { padding: 10px 10px; font-size: 13px; border: 1px solid #44525d; background: #2c353d; color: #fff; }
+        .bet-util-btn:hover { background: #3d4a56; }
+        .allin-btn { background-color: #ff6f00; color: white; border: none; }
+        .allin-btn:hover { background-color: #e65100; }
+        .save-btn { background-color: #2e7d32; color: white; border: none; font-size: 13px; }
+       
+        .relief-btn { background-color: #b71c1c; color: white; border: none; width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; display: none; animation: flash 1s infinite; }
+        @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+       
+        .restart-btn { background-color: #37474f; color: #cfd8dc; border: none; font-size: 12px; padding: 5px 10px; border-radius: 4px; }
+       
+        /* 경마 레이스 트랙 */
+        .track-container {
+            width: 100%; background: #14421e; padding: 15px 0; border-radius: 8px;
+            position: relative; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); overflow: hidden;
+            border: 3px solid #2e7d32;
+        }
+        .lane {
+            height: 70px; border-bottom: 1px dashed rgba(255, 255, 255, 0.25);
+            position: relative; display: flex; align-items: center; transition: background-color 0.3s;
+        }
+        .lane:last-child { border-bottom: none; }
+        .lane.highlighted { background-color: rgba(255, 215, 0, 0.1); }
+        .lane-number {
+            color: #ffd700; font-weight: bold; font-size: 18px; width: 45px;
+            text-align: center; z-index: 2; text-shadow: 1px 1px 3px #000;
+            border-right: 2px solid rgba(255,255,255,0.2); height: 100%; display: flex; align-items: center; justify-content: center;
+        }
+        .horse {
+            font-size: 36px; position: absolute; left: 50px;
+            transform: scaleX(-1); transition: left 0.04s linear; z-index: 3;
+        }
+        .horse.galloping { animation: gallop 0.12s infinite alternate ease-in-out; }
+        @keyframes gallop {
+            0% { transform: scaleX(-1) translateY(-3px) rotate(-3deg); }
+            100% { transform: scaleX(-1) translateY(3px) rotate(5deg); }
+        }
+        .finish-line {
+            position: absolute; right: 60px; top: 0; bottom: 0; width: 12px;
+            background: repeating-linear-gradient(45deg,#fff,#fff 6px,#000 6px,#000 12px);
+            z-index: 1; box-shadow: -2px 0 8px rgba(0,0,0,0.5);
+        }
+        .live-commentary {
+            margin-top: 15px; font-size: 14px; color: #ffeb3b; background: #151a1e;
+            padding: 8px 20px; border-radius: 6px; width: 100%; box-sizing: border-box;
+            text-align: center; font-style: italic; min-height: 36px; border: 1px solid #2a343c;
+        }
+
+        /* 📊 순위 스코어보드 UI */
+        .rank-board-table {
+            width: 100%; border-collapse: collapse; margin-top: 10px; background: #1a2229;
+            border-radius: 8px; overflow: hidden; border: 1px solid #343e46; text-align: center;
+        }
+        .rank-board-table th { background-color: #242c33; color: #ffd700; padding: 10px; font-size: 14px; }
+        .rank-board-table td { padding: 10px; font-size: 14px; border-bottom: 1px solid #242c33; }
+        .rank-board-table tr:last-child td { border-bottom: none; }
+        .rank-row-1 { background-color: rgba(255, 215, 0, 0.15); font-weight: bold; color: #fff; }
+        .rank-row-2 { background-color: rgba(192, 192, 192, 0.1); }
+        .rank-row-3 { background-color: rgba(205, 127, 50, 0.08); }
+        .bet-target-badge { background-color: #e91e63; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 5px; font-weight: bold; }
+
+        /* 슬롯머신 */
+        .slot-machine-box {
+            background: #2b1d19; padding: 25px; border-radius: 15px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8); border: 4px solid #d4af37;
+            display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box;
+        }
+        .slots-container { display: flex; gap: 15px; margin-bottom: 20px; }
+        .slot-reel {
+            width: 90px; height: 110px; background: #fff; border-radius: 8px;
+            font-size: 50px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.5);
+            border: 2px solid #5d4037; color: #000;
+        }
+        .slot-info { color: #ccc; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; text-align: center; font-size: 13px; line-height: 1.6; width: 100%; box-sizing: border-box;}
+
+        /* 룰렛 */
+        .roulette-box {
+            background: #151a30; padding: 25px; border-radius: 15px;
+            border: 4px solid #ffd54f; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box;
+        }
+        .roulette-bet-zones { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
+        .bet-zone-btn { flex: 1; padding: 12px; font-size: 14px; color: white; border: none; border-radius: 6px; font-weight: bold; }
+        .zone-red { background-color: #c62828; }
+        .zone-black { background-color: #212121; border: 1px solid #424242; }
+        .zone-green { background-color: #2e7d32; }
+        .bet-zone-btn.selected { outline: 3px solid #ffeb3b; transform: scale(1.02); box-shadow: 0 0 10px #ffeb3b; }
+        .roulette-wheel {
+            width: 160px; height: 160px; background: #1b5e20; border-radius: 50%;
+            border: 8px solid #4e342e; display: flex; align-items: center; justify-content: center;
+            font-size: 45px; margin-bottom: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.6); color: white;
+        }
+
+        /* 결과 알림 전광판 */
+        .result {
+            margin-top: 20px; font-size: 16px; font-weight: bold;
+            color: #fff; min-height: 75px; text-align: center; line-height: 1.5;
+            background: #151a1e; width: 100%; max-width: 900px; padding: 15px;
+            border-radius: 10px; border: 1px solid #2a343c; box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .footer-actions { margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <h1>🎰 ⚡ 라스베가스 로열 카지노 ⚡ 🎰</h1>
+    <div class="sub-title">통합 자산 관리 및 오디오 이퀄라이저 사운드 에디션</div>
+   
+    <button id="reliefBtn" class="relief-btn" onclick="forceResetGame()">🚨 파산: 시스템 전면 초기화 (원금 10,000으로 리셋)</button>
+
+    <div class="dashboard">
+        <div class="dash-item">
+            <div class="dash-label">💰 내 보유 자산</div>
+            <div class="dash-value">
+                <span id="myMoney">10,000</span> <span style="font-size:13px; color:#aaa; margin-left:4px;">골드</span>
+                <span id="comboBadge" class="combo-badge">🔥 0 콤보</span>
+            </div>
+        </div>
+        <div class="dash-item">
+            <div class="dash-label">🏆 명예의 전당 최고 기록</div>
+            <div class="dash-value" id="recordBoard" style="font-size: 16px; color: #ffd700;">기록 없음</div>
+        </div>
+        <div class="dash-item">
+            <div class="dash-label">💾 현재 자산 명예의 전당 등록</div>
+            <div class="save-zone">
+                <input type="text" id="userName" placeholder="플레이어명" maxlength="10">
+                <button class="save-btn" id="saveBtn" onclick="saveRecord()">등록</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="audio-setting-panel">
+        <div class="audio-title">🎵 ⚙️ 오디오 시스템 설정</div>
+        <div class="audio-controls">
+            <button id="bgmToggleBtn" class="bgm-toggle-btn" onclick="toggleBGM()">📻 BGM 재생 시작</button>
+            <div class="volume-slider-wrapper">
+                <span>🔊 볼륨</span>
+                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="40" oninput="adjustVolume(this.value)">
+                <span id="volumePercent">40%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mode-tabs">
+        <button class="tab-btn active" id="tab-horse" onclick="switchMode('horse')">🐎 다이내믹 밸런스 경마</button>
+        <button class="tab-btn" id="tab-slot" onclick="switchMode('slot')">🎰 벨런스드 슬롯머신</button>
+        <button class="tab-btn" id="tab-roulette" onclick="switchMode('roulette')">🎡 다크 미니 룰렛</button>
+    </div>
+
+    <div id="panel-horse" class="game-panel active">
+        <div class="controls-wrapper">
+            <div class="control-group">
+                <label for="horseSelect">예측마</label>
+                <select id="horseSelect" onchange="highlightLane()">
+                    <option value="1">1번 번개호</option>
+                    <option value="2">2번 적토마</option>
+                    <option value="3">3번 질풍이</option>
+                    <option value="4">4번 다크호스</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="betAmountHorse">배팅액</label>
+                <input type="number" id="betAmountHorse" value="1000" min="100" step="100">
+                <button class="bet-util-btn" id="halfBtnHorse" onclick="setBetFraction('betAmountHorse', 0.5)">½</button>
+                <button class="bet-util-btn" id="quarterBtnHorse" onclick="setBetFraction('betAmountHorse', 0.25)">¼</button>
+                <button class="allin-btn" id="allInBtnHorse" onclick="allInGame('horse')">올인</button>
+            </div>
+            <button class="start-btn" id="startBtnHorse" onclick="startRace()">레이스 시작! 🏁</button>
+        </div>
+       
+        <div class="track-container">
+            <div class="finish-line"></div>
+            <div class="lane" id="lane1"><div class="lane-number">1</div><div class="horse" id="horse1">🐎</div></div>
+            <div class="lane" id="lane2"><div class="lane-number">2</div><div class="horse" id="horse2">🐎</div></div>
+            <div class="lane" id="lane3"><div class="lane-number">3</div><div class="horse" id="horse3">🐎</div></div>
+            <div class="lane" id="lane4"><div class="lane-number">4</div><div class="horse" id="horse4">🐎</div></div>
+        </div>
+        <div id="liveCommentary" class="live-commentary">배팅 후 경기를 시작하면 실시간 레이스 중계가 이곳에 표시됩니다.</div>
+    </div>
+
+    <div id="panel-slot" class="game-panel">
+        <div class="controls-wrapper">
+            <div class="control-group">
+                <label for="betAmountSlot">배팅액</label>
+                <input type="number" id="betAmountSlot" value="1000" min="100" step="100">
+                <button class="bet-util-btn" id="halfBtnSlot" onclick="setBetFraction('betAmountSlot', 0.5)">½</button>
+                <button class="bet-util-btn" id="quarterBtnSlot" onclick="setBetFraction('betAmountSlot', 0.25)">¼</button>
+                <button class="allin-btn" id="allInBtnSlot" onclick="allInGame('slot')">올인</button>
+            </div>
+            <button class="start-btn" id="startBtnSlot" onclick="spinSlots()">슬롯 돌리기 🎰</button>
+        </div>
+        <div class="slot-machine-box">
+            <div class="slots-container">
+                <div class="slot-reel" id="reel1">🍒</div>
+                <div class="slot-reel" id="reel2">🍒</div>
+                <div class="slot-reel" id="reel3">🍒</div>
+            </div>
+            <div class="slot-info">
+                🍒 3개: x2.5 배 | 💎 3개: x5.0 배 | 7️⃣ 3개: <b>대박 잭팟 x12.0!</b><br>
+                <span style="color:#ff6b6b;">※ 패널티 벨런스: 2개 일치 확률 대폭 하락! 일치 시 배팅액의 <b>x0.8배 환급</b></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="panel-roulette" class="game-panel">
+        <div class="controls-wrapper">
+            <div class="control-group">
+                <label for="betAmountRoulette">배팅액</label>
+                <input type="number" id="betAmountRoulette" value="1000" min="100" step="100">
+                <button class="bet-util-btn" id="halfBtnRoulette" onclick="setBetFraction('betAmountRoulette', 0.5)">½</button>
+                <button class="bet-util-btn" id="quarterBtnRoulette" onclick="setBetFraction('betAmountRoulette', 0.25)">¼</button>
+                <button class="allin-btn" id="allInBtnRoulette" onclick="allInGame('roulette')">올인</button>
+            </div>
+            <button class="start-btn" id="startBtnRoulette" onclick="spinRoulette()">룰렛 회전 🎡</button>
+        </div>
+        <div class="roulette-box">
+            <div class="roulette-bet-zones">
+                <button class="bet-zone-btn zone-red selected" id="zone-red" onclick="selectRouletteZone('red')">🔴 Red (x1.9)</button>
+                <button class="bet-zone-btn zone-black" id="zone-black" onclick="selectRouletteZone('black')">⚫ Black (x1.9)</button>
+                <button class="bet-zone-btn zone-green" id="zone-green" onclick="selectRouletteZone('green')">🟢 Green Jackpot (x10.0)</button>
+            </div>
+            <div class="roulette-wheel" id="rouletteWheel">❓</div>
+        </div>
+    </div>
+
+    <div class="result" id="resultDisplay">원하는 종목의 탭을 선택하고 배팅 금액을 설정하여 게임을 즐기세요.</div>
+
+    <div class="footer-actions">
+        <button id="restartBtn" class="restart-btn" onclick="restartGame()">🔄 시스템 전면 초기화</button>
+    </div>
+
+    <script>
+        // 🔒 개발자 도구 및 우클릭 차단 고수
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || (e.ctrlKey && e.keyCode === 85)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // 글로벌 시스템 자산 데이터
+        let userMoney = 10000;
+        let bestRecord = 0;
+        let bestPlayer = "";
+        let winCombo = 0;
+        let isGaming = false;
+        let currentActiveMode = 'horse';
+       
+        const horseNames = { 1: "1번 번개호", 2: "2번 적토마", 3: "3번 질풍이", 4: "4번 다크호스" };
+        let currentOdds = {};
+
+        const slotItems = ["🍒", "🍋", "🍇", "💎", "7️⃣"];
+        let selectedRouletteZone = 'red';
+        const roulettePool = [
+            {icon:"🔴", color:"red"}, {icon:"⚫", color:"black"}, {icon:"🔴", color:"red"}, {icon:"⚫", color:"black"},
+            {icon:"🔴", color:"red"}, {icon:"⚫", color:"black"}, {icon:"🔴", color:"red"}, {icon:"⚫", color:"black"},
+            {icon:"🟢", color:"green"}
+        ];
+
+        // 🎵 고성능 Web Audio API 오디오 엔진 스크립트
+        let audioCtx = null;
+        let mainVolumeNode = null;
+        let bgmVolumeNode = null;
+        let bgmIntervalId = null;
+        let isBgmPlaying = false;
+        let currentVolume = 0.4; // 기본 마스터 볼륨 40%
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+               
+                // 마스터 노드 및 BGM 분리형 볼륨 제어 노드 구성
+                mainVolumeNode = audioCtx.createGain();
+                mainVolumeNode.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
+                mainVolumeNode.connect(audioCtx.destination);
+
+                bgmVolumeNode = audioCtx.createGain();
+                bgmVolumeNode.gain.setValueAtTime(0.5, audioCtx.currentTime); // 사운드 밸런스를 위한 BGM 자체 감쇄
+                bgmVolumeNode.connect(mainVolumeNode);
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 🔊 실시간 볼륨 조절 슬라이더 핸들러
+        function adjustVolume(val) {
+            currentVolume = parseFloat(val) / 100;
+            document.getElementById('volumePercent').innerText = val + "%";
+            if (mainVolumeNode) {
+                mainVolumeNode.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
+            }
+        }
+
+        // 📻 깔롱한 베이스 하우스 스타일 BGM 토글
+        function toggleBGM() {
+            initAudio();
+            const btn = document.getElementById('bgmToggleBtn');
+
+            if (isBgmPlaying) {
+                // BGM 정지 메커니즘
+                clearInterval(bgmIntervalId);
+                isBgmPlaying = false;
+                btn.innerText = "📻 BGM 재생 시작";
+                btn.classList.remove('playing');
+            } else {
+                // BGM 구동 메커니즘 (웹 오디오 신디사이저 무한 루프 믹싱)
+                isBgmPlaying = true;
+                btn.innerText = "⏸️ BGM 정지";
+                btn.classList.add('playing');
+
+                let beatCount = 0;
+                bgmIntervalId = setInterval(() => {
+                    if (!isBgmPlaying) return;
+                   
+                    let time = audioCtx.currentTime;
+                   
+                    // 1. 묵직하고 깔롱한 베이스 라인 합성기
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                   
+                    // 세련된 라스베가스 테크노풍 베이스 음계 스케일 루프
+                    let notes = [55.00, 55.00, 65.41, 58.27, 55.00, 73.42, 65.41, 48.99];
+                    let currentNote = notes[beatCount % notes.length];
+                   
+                    osc.frequency.setValueAtTime(currentNote, time);
+                   
+                    gain.gain.setValueAtTime(0.3, time);
+                    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.22);
+                   
+                    osc.connect(gain);
+                    gain.connect(bgmVolumeNode);
+                    osc.start(time);
+                    osc.stop(time + 0.25);
+
+                    // 2. 카지노 무드를 더해줄 스네어/하이햇 비트 노이즈 믹싱
+                    if (beatCount % 2 === 1) {
+                        let snareOsc = audioCtx.createOscillator();
+                        let snareGain = audioCtx.createGain();
+                        snareOsc.type = 'sawtooth';
+                        snareOsc.frequency.setValueAtTime(130, time);
+                        snareGain.gain.setValueAtTime(0.05, time);
+                        snareGain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+                        snareOsc.connect(snareGain);
+                        snareGain.connect(bgmVolumeNode);
+                        snareOsc.start(time);
+                        snareOsc.stop(time + 0.1);
+                    }
+                   
+                    beatCount++;
+                }, 250); // 120 BPM 속도감
+            }
+        }
+
+        // 🔔 [성공 효과음] 짜릿한 상승식 멜로디 믹서
+        function playWinSound() {
+            initAudio();
+            let time = audioCtx.currentTime;
+            // 도-미-솔-도 형태의 맑은 아르페지오 잭팟 사운드 속성 구현
+            let tones = [523.25, 659.25, 783.99, 1046.50];
+           
+            tones.forEach((freq, idx) => {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+               
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, time + (idx * 0.08));
+               
+                gain.gain.setValueAtTime(0.2, time + (idx * 0.08));
+                gain.gain.exponentialRampToValueAtTime(0.01, time + (idx * 0.08) + 0.3);
+               
+                osc.connect(gain);
+                gain.connect(mainVolumeNode);
+                osc.start(time + (idx * 0.08));
+                osc.stop(time + (idx * 0.08) + 0.35);
+            });
+        }
+
+        // 📉 [실패 효과음] 아쉬움을 달래는 하강식 베이스 사운드
+        function playLoseSound() {
+            initAudio();
+            let time = audioCtx.currentTime;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+           
+            osc.type = 'sawtooth';
+            // 220Hz 에서 90Hz로 순식간에 떨어지는 추락형 오디오 주파수 맵핑
+            osc.frequency.setValueAtTime(220, time);
+            osc.frequency.linearRampToValueAtTime(90, time + 0.4);
+           
+            gain.gain.setValueAtTime(0.25, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
+           
+            osc.connect(gain);
+            gain.connect(mainVolumeNode);
+            osc.start(time);
+            osc.stop(time + 0.45);
+        }
+
+        // 초기 시스템 구동
+        updateOdds();
+        highlightLane();
+        updateMoneyDisplay();
+
+        function switchMode(mode) {
+            if(isGaming) {
+                alert("게임이 진행 중일 때는 종목을 변경할 수 없습니다!");
+                return;
+            }
+            initAudio();
+            currentActiveMode = mode;
+           
+            document.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab-${mode}`).classList.add('active');
+
+            document.querySelectorAll('.game-panel').forEach(panel => panel.classList.remove('active'));
+            document.getElementById(`panel-${mode}`).classList.add('active');
+
+            document.getElementById('resultDisplay').innerHTML = "종목이 변경되었습니다. 배팅 후 시작하세요.";
+        }
+
+        function updateMoneyDisplay() {
+            document.getElementById('myMoney').innerText = userMoney.toLocaleString();
+           
+            const comboBadge = document.getElementById('comboBadge');
+            if(winCombo > 0) {
+                comboBadge.innerText = `🔥 ${winCombo}연승 (+${winCombo * 2}%)`;
+                comboBadge.style.display = 'inline-block';
+            } else {
+                comboBadge.style.display = 'none';
+            }
+
+            if (userMoney <= 0) {
+                document.getElementById('reliefBtn').style.display = 'block';
+                disableActionButtons(true);
+            } else {
+                document.getElementById('reliefBtn').style.display = 'none';
+                disableActionButtons(false);
+            }
+        }
+
+        function disableActionButtons(disabled) {
+            const btnIds = [
+                'startBtnHorse', 'allInBtnHorse', 'halfBtnHorse', 'quarterBtnHorse',
+                'startBtnSlot', 'allInBtnSlot', 'halfBtnSlot', 'quarterBtnSlot',
+                'startBtnRoulette', 'allInBtnRoulette', 'halfBtnRoulette', 'quarterBtnRoulette'
+            ];
+            btnIds.forEach(id => {
+                const btn = document.getElementById(id);
+                if(btn) btn.disabled = disabled;
+            });
+        }
+
+        function setBetFraction(inputId, fraction) {
+            if (isGaming || userMoney <= 0) return;
+            initAudio();
+            let targetAmount = Math.floor((userMoney * fraction) / 100) * 100;
+            if (targetAmount < 100 && userMoney >= 100) {
+                targetAmount = 100;
+            }
+            document.getElementById(inputId).value = targetAmount;
+        }
+
+        function allInGame(mode) {
+            if (isGaming || userMoney <= 0) return;
+            initAudio();
+            if (mode === 'horse') {
+                document.getElementById('betAmountHorse').value = userMoney;
+                startRace();
+            } else if (mode === 'slot') {
+                document.getElementById('betAmountSlot').value = userMoney;
+                spinSlots();
+            } else if (mode === 'roulette') {
+                document.getElementById('betAmountRoulette').value = userMoney;
+                spinRoulette();
+            }
+        }
+
+        function forceResetGame() {
+            userMoney = 10000;
+            winCombo = 0;
+            alert("파산으로 인해 시스템이 초기화되었습니다. 기본 자산 10,000 골드로 재시작합니다.");
+            updateMoneyDisplay();
+            updateOdds();
+            document.getElementById('resultDisplay').innerHTML = "초기화 완화 장치 작동. 배팅을 다시 시작하세요.";
+        }
+
+        function checkAndGetBet(inputId) {
+            const betInput = document.getElementById(inputId);
+            let betAmount = parseInt(betInput.value);
+            if(isNaN(betAmount) || betAmount < 100) {
+                alert("최소 배팅 금액은 100골드입니다.");
+                return 0;
+            }
+            if(betAmount > userMoney) {
+                alert("보유 자산을 초과하여 배팅할 수 없습니다!");
+                return 0;
+            }
+            return betAmount;
+        }
+
+        function saveRecord() {
+            const name = document.getElementById('userName').value.trim();
+            if (!name) { alert("플레이어 이름을 입력해 주세요."); return; }
+
+            if (userMoney > bestRecord) {
+                bestRecord = userMoney;
+                bestPlayer = name;
+                document.getElementById('recordBoard').innerHTML = `<b>${bestPlayer}</b> (${bestRecord.toLocaleString()} 골드)`;
+                alert("명예의 전당에 최고 기록이 갱신되었습니다!");
+            } else {
+                alert(`현재 최고 기록(${bestRecord.toLocaleString()} 골드)보다 자산이 많아야 등록 가능합니다.`);
+            }
+        }
+
+        function restartGame() {
+            if(confirm("정말로 모든 자산과 전당 기록을 공장 초기화하시겠습니까?")) {
+                userMoney = 10000;
+                bestRecord = 0;
+                bestPlayer = "";
+                winCombo = 0;
+                document.getElementById('recordBoard').innerHTML = `기록 없음`;
+                document.getElementById('userName').value = "";
+                document.getElementById('resultDisplay').innerHTML = "초기화되었습니다. 배팅 후 게임을 시작하세요!";
+                updateMoneyDisplay();
+                updateOdds();
+                highlightLane();
+            }
+        }
+
+        function updateOdds() {
+            const select = document.getElementById('horseSelect');
+            for (let i = 1; i <= 4; i++) {
+                currentOdds[i] = parseFloat((Math.random() * (3.5 - 1.2) + 1.2).toFixed(1));
+                select.options[i - 1].text = `${horseNames[i]} [배당: x${currentOdds[i].toFixed(1)}]`;
+            }
+        }
+
+        function highlightLane() {
+            const selected = document.getElementById('horseSelect').value;
+            for (let i = 1; i <= 4; i++) {
+                const lane = document.getElementById(`lane${i}`);
+                if (i == selected) lane.classList.add('highlighted');
+                else lane.classList.remove('highlighted');
+            }
+        }
+
+        // 🐎 [모드 1] 경마 엔진 및 결과 연산 정산
+        function startRace() {
+            if (isGaming) return;
+            const bet = checkAndGetBet('betAmountHorse');
+            if (bet <= 0) return;
+
+            initAudio();
+            isGaming = true;
+            userMoney -= bet;
+            updateMoneyDisplay();
+
+            const selectedHorse = parseInt(document.getElementById('horseSelect').value);
+            const horses = [
+                document.getElementById('horse1'),
+                document.getElementById('horse2'),
+                document.getElementById('horse3'),
+                document.getElementById('horse4')
+            ];
+
+            horses.forEach(h => { h.style.left = '50px'; h.classList.add('galloping'); });
+
+            const trackWidth = document.querySelector('.track-container').clientWidth;
+            const finishPos = trackWidth - 110;
+            const commentary = document.getElementById('liveCommentary');
+            commentary.innerText = "🏁 출발선 통과! 네 마리의 말이 예측할 수 없는 질주를 시작합니다!";
+
+            let raceInterval = setInterval(() => {
+                let positions = [];
+
+                for(let i=0; i<4; i++) {
+                    positions.push({ id: i + 1, left: parseFloat(horses[i].style.left) });
+                }
+                positions.sort((a,b) => b.left - a.left);
+                let currentLeaderId = positions[0].id;
+
+                for (let i = 0; i < 4; i++) {
+                    let hId = i + 1;
+                    let currentLeft = parseFloat(horses[i].style.left);
+                    let baseStep = Math.random() * 7 + 4;
+
+                    let odds = currentOdds[hId];
+                    let slowDownChance = 0.45;
+                    if (odds < 2.0) slowDownChance = 0.35;
+                    else if (odds > 2.8) slowDownChance = 0.52;
+
+                    let speedUpChance = 0.40;
+                    if (odds > 2.8) speedUpChance = 0.55;
+                    else if (odds < 2.0) speedUpChance = 0.32;
+
+                    if (hId === currentLeaderId) {
+                        if(Math.random() < slowDownChance) baseStep *= 0.72;
+                    } else {
+                        if(Math.random() < speedUpChance) baseStep *= 1.48;
+                    }
+
+                    let newLeft = currentLeft + baseStep;
+                    horses[i].style.left = newLeft + 'px';
+                }
+
+                commentary.innerText = `[중계] 현재 선두는 ${horseNames[currentLeaderId]}! 뒤이어 격렬한 추격전이 벌어집니다!`;
+
+                let isFinished = positions.some(p => p.left >= finishPos);
+
+                if (isFinished) {
+                    clearInterval(raceInterval);
+                    horses.forEach(h => h.classList.remove('galloping'));
+                    isGaming = false;
+
+                    let finalRankings = [];
+                    for(let i=0; i<4; i++) {
+                        finalRankings.push({
+                            id: i + 1,
+                            name: horseNames[i + 1],
+                            left: parseFloat(horses[i].style.left),
+                            odds: currentOdds[i + 1]
+                        });
+                    }
+                    finalRankings.sort((a, b) => b.left - a.left);
+
+                    let rank1 = finalRankings[0].id;
+                    let rank2 = finalRankings[1].id;
+                    let rank3 = finalRankings[2].id;
+
+                    let myRank = 4;
+                    if (selectedHorse === rank1) myRank = 1;
+                    else if (selectedHorse === rank2) myRank = 2;
+                    else if (selectedHorse === rank3) myRank = 3;
+
+                    let betStatusMsg = "";
+                    if (myRank === 1) {
+                        // 🔔 성공 효과음 가동
+                        playWinSound();
+                        let reward = Math.floor(bet * currentOdds[rank1]);
+                        let comboBonus = Math.floor(reward * (winCombo * 0.02));
+                        let totalReward = reward + comboBonus;
+                        userMoney += totalReward;
+                        winCombo++;
+                        betStatusMsg = `<span style="color: #4caf50;">🎉 적중 대성공! +${totalReward.toLocaleString()} 골드 획득!</span>`;
+                    } else if (myRank === 2) {
+                        playWinSound(); // 보험 환급도 보전이므로 성공음 처리
+                        let recover = Math.floor(bet * 0.3);
+                        userMoney += recover;
+                        winCombo = 0;
+                        betStatusMsg = `<span style="color: #2196f3;">🥈 2등 보전 보험 적용! 배팅금 30%(+${recover.toLocaleString()} 골드) 반환</span>`;
+                    } else if (myRank === 3) {
+                        playWinSound();
+                        let recover = Math.floor(bet * 0.1);
+                        userMoney += recover;
+                        winCombo = 0;
+                        betStatusMsg = `<span style="color: #ff9800;">🥉 3등 보전 보험 적용! 배팅금 10%(+${recover.toLocaleString()} 골드) 반환</span>`;
+                    } else {
+                        // 📉 실패 효과음 가동
+                        playLoseSound();
+                        winCombo = 0;
+                        betStatusMsg = `<span style="color: #f44336;">💸 4등 낙마.. 배팅금 ${bet.toLocaleString()} 골드 유실</span>`;
+                    }
+
+                    commentary.innerText = "🏁 레이스가 종료되었습니다! 최종 순위 보드를 확인하세요.";
+
+                    let tableHtml = `
+                        <div style="margin-bottom: 8px; font-weight: bold; font-size:15px;">📊 경기 최종 순위 결과 스코어보드</div>
+                        <table class="rank-board-table">
+                            <thead>
+                                <tr>
+                                    <th>순위</th>
+                                    <th>마명 (배당)</th>
+                                    <th>최종 주행 거리</th>
+                                    <th>내 예측</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    finalRankings.forEach((horse, index) => {
+                        let rankNum = index + 1;
+                        let rowClass = `rank-row-${rankNum}`;
+                        let medal = rankNum === 1 ? "🥇" : rankNum === 2 ? "🥈" : rankNum === 3 ? "🥉" : "🏅";
+                        let isMyTarget = (horse.id === selectedHorse) ? `<span class="bet-target-badge">MY 배팅</span>` : "";
+
+                        tableHtml += `
+                            <tr class="${rowClass}">
+                                <td>${medal} ${rankNum}등</td>
+                                <td>${horse.name} (x${horse.odds.toFixed(1)})</td>
+                                <td>${Math.floor(horse.left)} m</td>
+                                <td>${isMyTarget || "-"}</td>
+                            </tr>
+                        `;
+                    });
+
+                    tableHtml += `
+                            </tbody>
+                        </table>
+                        <div style="margin-top: 12px; font-size: 15px;">${betStatusMsg}</div>
+                    `;
+
+                    document.getElementById('resultDisplay').innerHTML = tableHtml;
+                    updateOdds();
+                    updateMoneyDisplay();
+                }
+            }, 45);
+        }
+
+        // 🎰 [모드 2] 벨런스드 슬롯머신
+        function spinSlots() {
+            if (isGaming) return;
+            const bet = checkAndGetBet('betAmountSlot');
+            if (bet <= 0) return;
+
+            initAudio();
+            isGaming = true;
+            userMoney -= bet;
+            updateMoneyDisplay();
+
+            let tick = 0;
+            const interval = setInterval(() => {
+                document.getElementById('reel1').innerText = slotItems[Math.floor(Math.random() * slotItems.length)];
+                document.getElementById('reel2').innerText = slotItems[Math.floor(Math.random() * slotItems.length)];
+                document.getElementById('reel3').innerText = slotItems[Math.floor(Math.random() * slotItems.length)];
+                tick++;
+
+                if (tick > 12) {
+                    clearInterval(interval);
+                    isGaming = false;
+
+                    let r1, r2, r3;
+
+                    if (Math.random() < 0.65) {
+                        let shuffle = [...slotItems].sort(() => Math.random() - 0.5);
+                        r1 = shuffle[0]; r2 = shuffle[1]; r3 = shuffle[2];
+                    } else {
+                        r1 = slotItems[Math.floor(Math.random() * slotItems.length)];
+                        r2 = slotItems[Math.floor(Math.random() * slotItems.length)];
+                        r3 = slotItems[Math.floor(Math.random() * slotItems.length)];
+                    }
+
+                    document.getElementById('reel1').innerText = r1;
+                    document.getElementById('reel2').innerText = r2;
+                    document.getElementById('reel3').innerText = r3;
+
+                    let resultMsg = `🎰 슬롯 결과: [ ${r1} ${r2} ${r3} ] `;
+                    let multiplier = 0;
+
+                    if (r1 === r2 && r2 === r3) {
+                        if (r1 === "7️⃣") multiplier = 12;
+                        else if (r1 === "💎") multiplier = 5;  
+                        else multiplier = 2.5;
+                    } else if (r1 === r2 || r2 === r3 || r1 === r3) {
+                        multiplier = 0.8;
+                    }
+
+                    if (multiplier >= 2.5) {
+                        // 🔔 성공 효과음
+                        playWinSound();
+                        let reward = Math.floor(bet * multiplier);
+                        let comboBonus = Math.floor(reward * (winCombo * 0.02));
+                        let totalReward = reward + comboBonus;
+                        userMoney += totalReward;
+                        winCombo++;
+                        resultMsg += `<br><span style="color: #4caf50;">🎉 잭팟 성공! x${multiplier}배 당첨! +${totalReward.toLocaleString()} 골드 수령</span>`;
+                    } else if (multiplier === 0.8) {
+                        playWinSound();
+                        let reward = Math.floor(bet * multiplier);
+                        userMoney += reward;
+                        resultMsg += `<br><span style="color: #ff9800;">🔹 바늘구멍을 뚫은 2개 일치 보너스 환급 (-20% 손실): +${reward.toLocaleString()} 골드</span>`;
+                    } else {
+                        // 📉 실패 효과음
+                        playLoseSound();
+                        winCombo = 0;
+                        resultMsg += `<br><span style="color: #f44336;">💸 낙첨. 배팅금을 모두 잃었습니다.</span>`;
+                    }
+
+                    document.getElementById('resultDisplay').innerHTML = resultMsg;
+                    updateMoneyDisplay();
+                }
+            }, 90);
+        }
+
+        // 🎡 [모드 3] 미니 룰렛
+        function selectRouletteZone(zone) {
+            if (isGaming) return;
+            initAudio();
+            selectedRouletteZone = zone;
+            document.querySelectorAll('.bet-zone-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(`zone-${zone}`).classList.add('selected');
+        }
+
+        function spinRoulette() {
+            if (isGaming) return;
+            const bet = checkAndGetBet('betAmountRoulette');
+            if (bet <= 0) return;
+
+            initAudio();
+            isGaming = true;
+            userMoney -= bet;
+            updateMoneyDisplay();
+
+            let tick = 0;
+            const wheel = document.getElementById('rouletteWheel');
+
+            const interval = setInterval(() => {
+                const temp = roulettePool[Math.floor(Math.random() * roulettePool.length)];
+                wheel.innerText = temp.icon;
+                tick++;
+
+                if (tick > 15) {
+                    clearInterval(interval);
+                    isGaming = false;
+
+                    const finalPick = roulettePool[Math.floor(Math.random() * roulettePool.length)];
+                    wheel.innerText = finalPick.icon;
+
+                    let isWin = (finalPick.color === selectedRouletteZone);
+                    let multiplier = (finalPick.color === 'green') ? 10 : 1.9;
+                    let resultMsg = `🎡 결과: <b>${finalPick.icon} [${finalPick.color.toUpperCase()}]</b> `;
+
+                    if (isWin) {
+                        // 🔔 성공 효과음
+                        playWinSound();
+                        let reward = Math.floor(bet * multiplier);
+                        let comboBonus = Math.floor(reward * (winCombo * 0.02));
+                        let totalReward = reward + comboBonus;
+                        userMoney += totalReward;
+                        winCombo++;
+                        resultMsg += `<br><span style="color: #4caf50;">🎉 룰렛 예측 성공! 당첨금 +${totalReward.toLocaleString()} 골드!</span>`;
+                    } else {
+                        // 📉 실패 효과음
+                        playLoseSound();
+                        winCombo = 0;
+                        resultMsg += `<br><span style="color: #f44336;">💸 예측 실패.. 배팅금이 소멸되었습니다.</span>`;
+                    }
+
+                    document.getElementById('resultDisplay').innerHTML = resultMsg;
+                    updateMoneyDisplay();
+                }
+            }, 70);
+        }
+    </script>
+</body>
+</html>
